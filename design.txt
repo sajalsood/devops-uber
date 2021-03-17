@@ -1,0 +1,98 @@
+NUber
+
+Login/Registeration
+
+- Username
+- Password
+
+- Create a new booking
+
+- Show All Bookings
+
+
+Master table
+-----------------
+
+User
+- user_id, username, password
+
+Buses
+- bus_id, bus_name, seats
+
+Bus 1, 50
+Bus 2, 30
+
+Bookings
+- booking_id, user_id, bus_id, source, destination, booking_date, seats, bus_id
+
+
+
+API
+-------------------
+
+POST
+
+/login
+
+admin, admin 
+
+Request - { username, password }
+
+Response - { user_id, username }
+
+-------------------------
+
+
+GET
+
+/buses
+
+Request null
+
+Response { [ bus] }
+
+-------------------------
+
+
+POST 
+
+/booking
+
+Request - { user_id, source, destination, booking_date, seats, bus_id }
+
+Response - { booking_id }
+
+----------------------
+
+
+GET
+
+/booking
+
+Request - { user_id }
+
+Response - { user, booking }
+
+
+
+Backend
+
+======================
+
+localhost:3000/api/v1/{apiname}
+
+nodejs + express
+
+mongoose
+
+postman
+
+
+AWS
+
+================
+
+
+-- nginx, nodejs,
+
+-- elastic ip [pending]
