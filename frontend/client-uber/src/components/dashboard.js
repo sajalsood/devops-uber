@@ -29,7 +29,7 @@ export default function Dashboard({user}) {
   return(
       <Container className="themed-container">
         <h3><center>Book A Bus Ride!</center></h3>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} className="mg-3">
             <FormGroup>
                 <Label for="source">Source</Label>
                 <Input type="text" name="source" placeholder="Enter Source" onChange={e => setSource(e.target.value)} />

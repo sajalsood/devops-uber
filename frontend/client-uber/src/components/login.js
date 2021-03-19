@@ -22,7 +22,7 @@ export default function Login({setUser}) {
 
     return (
         <Container className="themed-container">
-            <h3><center>Login To Continue!</center></h3>
+            <h3><center>Login/Register</center></h3>
 
             <Form onSubmit={handleSubmit}>
                 <FormGroup>
