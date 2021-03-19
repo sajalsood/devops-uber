@@ -4,14 +4,18 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import Dashboard from './components/dashboard';
 import Login from './components/login';
-
+import Session from './services/session';
 
 function App() {
+  const { user, setUser } = Session();
 
-  const [token, setToken] = useState();
-
-  if(!token) {
-    return <Login setToken={setToken} />
+  if(!user) {
+    return (
+      <div className="App">
+        <header className="App-header">Devops UBER</header>
+        <Login setUser={setUser} />
+      </div>
+    )
   }
   
   return (
@@ -19,7 +23,7 @@ function App() {
       <header className="App-header">Devops UBER</header>
       <BrowserRouter>
         <Switch>
-          <Route path="/dashboard">
+          <Route exact path="/">
             <Dashboard />
           </Route>
         </Switch>
