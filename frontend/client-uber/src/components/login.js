@@ -22,6 +22,8 @@ export default function Login({setUser}) {
 
     return (
         <Container className="themed-container">
+            <h3><center>Login To Continue!</center></h3>
+
             <Form onSubmit={handleSubmit}>
                 <FormGroup>
                     <Label for="username">Username</Label>
