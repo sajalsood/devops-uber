@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import "./App.css";
 
 import Dashboard from './components/dashboard';
+import Bookings from './components/bookings';
 import Login from './components/login';
 import Session from './services/session';
 import {
@@ -28,9 +29,7 @@ function App() {
           <NavbarBrand href="/">DevopsUBER</NavbarBrand>
         </Navbar>
         <div className="App">
-          <Container className="themed-container">
             <Login setUser={setUser} />
-          </Container>
         </div>
     </div>
     )
@@ -45,21 +44,25 @@ function App() {
               <NavItem>
                 <NavLink href="/">Dashboard</NavLink>
               </NavItem>
+              <NavItem>
+                <NavLink href="/bookings">Bookings</NavLink>
+              </NavItem>
             </Nav>
             <NavbarText>Hello, {user.username} &nbsp;&nbsp;&nbsp;</NavbarText>
             <Button color="danger" onClick={e => clearSession()}>Logout</Button>
           </Collapse>
         </Navbar>
         <div className="App">
-          <Container className="themed-container">
-            <BrowserRouter>
-                <Switch>
-                  <Route exact path="/">
-                    <Dashboard user={user}/>
-                  </Route>
-                </Switch>
-            </BrowserRouter>
-          </Container>
+          <BrowserRouter>
+              <Switch>
+                <Route exact path="/">
+                  <Dashboard user={user}/>
+                </Route>
+                <Route path="/bookings">
+                  <Bookings user={user}/>
+                </Route>
+              </Switch>
+          </BrowserRouter>
         </div>
     </div>
   );
