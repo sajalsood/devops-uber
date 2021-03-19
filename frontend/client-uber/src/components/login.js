@@ -1,5 +1,6 @@
 import React,  { useState } from 'react';
 import { login } from '../services/apis';
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
 export default function Login({setUser}) {
     const [username, setUserName] = useState();
@@ -20,18 +21,16 @@ export default function Login({setUser}) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-        <label>
-            <p>Username</p>
-            <input type="text" onChange={e => setUserName(e.target.value)}/>
-        </label>
-        <label>
-            <p>Password</p>
-            <input type="password" onChange={e => setPassword(e.target.value)}/>
-        </label>
-        <div>
-            <button type="submit">Submit</button>
-        </div>
-        </form>
+        <Form onSubmit={handleSubmit}>
+            <FormGroup>
+                <Label for="username">Username</Label>
+                <Input type="text" name="username" placeholder="Enter Username" onChange={e => setUserName(e.target.value)} />
+            </FormGroup>
+            <FormGroup>
+                <Label for="password">Password</Label>
+                <Input type="password" name="password"  placeholder="Enter Password" onChange={e => setPassword(e.target.value)}/>
+            </FormGroup>
+            <Button type="submit">Submit</Button>
+        </Form>
     )
 }
