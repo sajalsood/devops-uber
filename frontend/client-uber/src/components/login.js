@@ -11,7 +11,12 @@ export default function Login({setUser}) {
         //   username,
         //   password
         // });
-        setUser({ username });
+
+        const user = {
+            userid: 1, 
+            username
+        }
+        setUser(user);
     }
 
     return (

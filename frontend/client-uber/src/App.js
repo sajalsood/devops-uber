@@ -7,12 +7,14 @@ import Login from './components/login';
 import Session from './services/session';
 
 function App() {
-  const { user, setUser } = Session();
+  const { user, setUser, clearSession } = Session();
 
   if(!user) {
     return (
       <div className="App">
-        <header className="App-header">Devops UBER</header>
+        <header className="App-header">
+          <div className="App-heading">Devops UBER</div>
+        </header>
         <Login setUser={setUser} />
       </div>
     )
@@ -20,11 +22,15 @@ function App() {
   
   return (
     <div className="App">
-      <header className="App-header">Devops UBER</header>
+      <header className="App-header">
+        <div className="App-user">Welcome, {user.username}</div>
+        <div className="App-heading">Devops UBER</div>
+        <button className="App-logout" onClick={e => clearSession()}>Logout</button>
+      </header>
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
-            <Dashboard />
+            <Dashboard user={user}/>
           </Route>
         </Switch>
       </BrowserRouter>
