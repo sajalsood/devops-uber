@@ -1,4 +1,5 @@
 import React,  { useState } from 'react';
+import { login } from '../services/apis';
 
 export default function Login({setUser}) {
     const [username, setUserName] = useState();
@@ -6,7 +7,7 @@ export default function Login({setUser}) {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        // const token = await loginUser({
+        // const user = await login({
         //   username,
         //   password
         // });
