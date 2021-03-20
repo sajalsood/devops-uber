@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 export const login = async(credentials) => {
-  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}/login`, {
+  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}:${process.env.REACT_APP_SERVER_API_PORT}/api/v1/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -11,14 +11,14 @@ export const login = async(credentials) => {
 }
 
 export const getBuses = async() => {
-  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}/buses`, {
+  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}:${process.env.REACT_APP_SERVER_API_PORT}/api/v1/buses`, {
     method: 'GET'
   }).then(res => res.json())
 }
 
 export const createBooking = async(booking) => {
   console.log(booking);
-  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}/booking`, {
+  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}:${process.env.REACT_APP_SERVER_API_PORT}/api/v1/booking`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ export const createBooking = async(booking) => {
 }
 
 export const getBookings = async(user_id) => {
-  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}/bookings/${user_id}`, {
+  return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}:${process.env.REACT_APP_SERVER_API_PORT}/api/v1/bookings/${user_id}`, {
     method: 'GET'
   }).then(res => res.json())
 }
