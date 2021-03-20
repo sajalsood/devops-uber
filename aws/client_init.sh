@@ -5,6 +5,8 @@ echo "REACT_APP_SERVER_API_PORT=${REACT_APP_SERVER_API_PORT}" >> /etc/environmen
 sudo apt-get install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+. ~/.nvm/nvm.sh
 sudo chown -R ubuntu:www-data /var/www
 sudo usermod -a -G www-data ubuntu
 echo "<h1>Deployed via Terraform</h1>" | sudo tee /var/www/html/index.html

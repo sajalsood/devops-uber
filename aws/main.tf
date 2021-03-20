@@ -127,8 +127,8 @@ resource "aws_security_group" "db_sg" {
   vpc_id      = aws_vpc.tf_vpc.id
   ingress {
     protocol        = "tcp"
-    from_port       = "3306"
-    to_port         = "3306"
+    from_port       = "5432"
+    to_port         = "5432"
     security_groups = [aws_security_group.uber_server_app_sg.id]
   }
   tags = {
@@ -165,6 +165,20 @@ resource "aws_db_instance" "rds" {
   }
 }
 
+# Server EC2 template file
+data "template_file" "server_init" {
+  template = "${file("server_init.sh")}"
+
+  vars = {
+    UBER_DB_HOST = aws_db_instance.rds.address
+    UBER_DB_PORT = aws_db_instance.rds.port
+    UBER_DB_NAME = var.db_name
+    UBER_DB_USER = var.db_username
+    UBER_DB_PASSWORD = var.db_password
+  }
+}
+
+# Server EC2
 resource "aws_instance" "uber-server-ec2" {
   ami                  = var.ami_name
   instance_type        = var.instance_type
@@ -177,23 +191,16 @@ resource "aws_instance" "uber-server-ec2" {
     volume_size           = var.instance_vol_size
     delete_on_termination = true
   }
-  user_data = <<-EOF
-    #!/bin/bash
-    echo "# App Environment Variables"
-    echo "export UBER_DB_HOST=${aws_db_instance.rds.address}" >> /etc/environment
-    echo "export UBER_DB_PORT=${aws_db_instance.rds.port}" >> /etc/environment
-    echo "export UBER_DB_NAME=${var.db_name}" >> /etc/environment
-    echo "export UBER_DB_USER=${var.db_username}" >> /etc/environment
-    echo "export UBER_DB_PASSWORD=${var.db_password}" >> /etc/environment
-  EOF
+  user_data = "${data.template_file.server_init.rendered}"
   tags = {
     "Name" = "ec2-uber-server"
   }
   depends_on = [aws_db_instance.rds]
 }
 
+# Client EC2 template file
 data "template_file" "client_init" {
-  template = "${file("install_client.sh")}"
+  template = "${file("client_init.sh")}"
 
   vars = {
     REACT_APP_SERVER_API_BASE_URL = aws_instance.uber-server-ec2.public_ip
@@ -201,6 +208,7 @@ data "template_file" "client_init" {
   }
 }
 
+# Client EC2
 resource "aws_instance" "uber-client-ec2" {
   ami                  = var.ami_name
   instance_type        = var.instance_type
