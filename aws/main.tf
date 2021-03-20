@@ -47,10 +47,10 @@ resource "aws_route_table_association" "assoc" {
   route_table_id = aws_route_table.rtb.id
 }
 
-# Application security group
-resource "aws_security_group" "app_sg" {
-  name        = "application"
-  description = "Security group for EC2 instance with web application"
+# Uber Client Application security group
+resource "aws_security_group" "uber_client_app_sg" {
+  name        = "uber_client_application"
+  description = "Security group for EC2 instance with uber client application"
   vpc_id      = aws_vpc.tf_vpc.id
   ingress {
     protocol    = "tcp"
@@ -64,10 +64,32 @@ resource "aws_security_group" "app_sg" {
     to_port     = "80"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    "Name" = "uber-client-app-sg"
+  }
+}
+
+# Application security group
+resource "aws_security_group" "uber_server_app_sg" {
+  name        = "uber_server_application"
+  description = "Security group for EC2 instance with uber server web application"
+  vpc_id      = aws_vpc.tf_vpc.id
   ingress {
     protocol    = "tcp"
-    from_port   = "443"
-    to_port     = "443"
+    from_port   = "22"
+    to_port     = "22"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol    = "tcp"
+    from_port   = "4444"
+    to_port     = "4444"
     cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
@@ -77,16 +99,32 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    "Name" = "application-sg"
+    "Name" = "uber-server-app-sg"
   }
 }
 
-resource "aws_instance" "ec2" {
+# Database security group
+resource "aws_security_group" "db_sg" {
+  name        = "database"
+  description = "Security group for RDS instance for uber database"
+  vpc_id      = aws_vpc.tf_vpc.id
+  ingress {
+    protocol        = "tcp"
+    from_port       = "3306"
+    to_port         = "3306"
+    security_groups = [aws_security_group.uber_server_app_sg.id]
+  }
+  tags = {
+    "Name" = "uber-db-sg"
+  }
+}
+
+resource "aws_instance" "uber-client-ec2" {
   ami                  = var.ami_name
   subnet_id            = element([aws_subnet.subnet.id], var.instance_subnet - 1)
   key_name             = var.key_name
   instance_type        = var.instance_type
-  security_groups      = [aws_security_group.app_sg.id]
+  security_groups      = [aws_security_group.uber_client_app_sg.id]
   ebs_block_device {
     device_name           = "/dev/sda1"
     volume_type           = var.instance_vol_type
@@ -94,6 +132,23 @@ resource "aws_instance" "ec2" {
     delete_on_termination = true
   }
   tags = {
-    "Name" = "ec2-ubuntu"
+    "Name" = "ec2-uber-client"
+  }
+}
+
+resource "aws_instance" "uber-server-ec2" {
+  ami                  = var.ami_name
+  subnet_id            = element([aws_subnet.subnet.id], var.instance_subnet - 1)
+  key_name             = var.key_name
+  instance_type        = var.instance_type
+  security_groups      = [aws_security_group.uber_server_app_sg.id]
+  ebs_block_device {
+    device_name           = "/dev/sda1"
+    volume_type           = var.instance_vol_type
+    volume_size           = var.instance_vol_size
+    delete_on_termination = true
+  }
+  tags = {
+    "Name" = "ec2-uber-server"
   }
 }
