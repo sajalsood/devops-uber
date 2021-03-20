@@ -177,8 +177,8 @@ resource "aws_instance" "uber-server-ec2" {
     volume_size           = var.instance_vol_size
     delete_on_termination = true
   }
-  user_data = <<EOF
-  #!/bin/bash
+  user_data = <<-EOF
+    #!/bin/bash
     echo "# App Environment Variables"
     echo "export UBER_DB_HOST=${aws_db_instance.rds.address}" >> /etc/environment
     echo "export UBER_DB_PORT=${aws_db_instance.rds.port}" >> /etc/environment
@@ -190,6 +190,15 @@ resource "aws_instance" "uber-server-ec2" {
     "Name" = "ec2-uber-server"
   }
   depends_on = [aws_db_instance.rds]
+}
+
+data "template_file" "client_init" {
+  template = "${file("install_client.sh")}"
+
+  vars = {
+    REACT_APP_SERVER_API_BASE_URL = aws_instance.uber-server-ec2.public_ip
+    REACT_APP_SERVER_API_PORT  = var.ec2_server_port
+  }
 }
 
 resource "aws_instance" "uber-client-ec2" {
@@ -204,12 +213,7 @@ resource "aws_instance" "uber-client-ec2" {
     volume_size           = var.instance_vol_size
     delete_on_termination = true
   }
-  user_data = <<EOF
-  #!/bin/bash
-    echo "# App Environment Variables"
-    echo "export REACT_APP_SERVER_API_BASE_URL=${aws_instance.uber-server-ec2.public_ip}" >> /etc/environment
-    echo "export REACT_APP_SERVER_API_PORT=${var.ec2_server_port}" >> /etc/environment
-  EOF
+  user_data = "${data.template_file.client_init.rendered}"
   tags = {
     "Name" = "ec2-uber-client"
   }
