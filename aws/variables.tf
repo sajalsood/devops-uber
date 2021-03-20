@@ -25,12 +25,12 @@ variable "cidr_block" {
 
 variable "cidrs" {
   description = "CIDR blocks for subnets."
-  default     = "10.0.1.0/24"
+  default     = ["10.0.0.0/24", "10.0.1.0/24"]
 }
 
 variable "azs" {
   description = "Availability zones for subnets."
-  default     = "b"
+  default     = ["a", "b"]
 }
 
 variable "db_storage_size" {
@@ -108,10 +108,8 @@ variable "instance_vol_size" {
 variable "instance_subnet" {
   description = "EC2 subnet serial"
   type        = number
-  default     = 1
+  default     = 2
 }
-
-
 
 variable "key_name" {
   description = "Name of key"

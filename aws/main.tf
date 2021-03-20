@@ -8,13 +8,24 @@ resource "aws_vpc" "tf_vpc" {
 }
 
 # Subnet for VPC
-resource "aws_subnet" "subnet" {
+resource "aws_subnet" "subnet1" {
   vpc_id                  = aws_vpc.tf_vpc.id
-  cidr_block              = var.cidrs
-  availability_zone       = join("", [var.region, var.azs])
+  cidr_block              = var.cidrs[0]
+  availability_zone       = join("", [var.region, var.azs[0]])
   map_public_ip_on_launch = true
   tags = {
-    "Name" = "subnet"
+    "Name" = "uber-vpc-subnet1"
+  }
+}
+
+# Subnet 2 for VPC
+resource "aws_subnet" "subnet2" {
+  vpc_id                  = aws_vpc.tf_vpc.id
+  cidr_block              = var.cidrs[1]
+  availability_zone       = join("", [var.region, var.azs[1]])
+  map_public_ip_on_launch = true
+  tags = {
+    "Name" = "uber-vpc-subnet2"
   }
 }
 
@@ -41,15 +52,21 @@ resource "aws_route" "public_route" {
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# Subnet route table association
-resource "aws_route_table_association" "assoc" {
-  subnet_id      = aws_subnet.subnet.id
+# Subnet1 route table association
+resource "aws_route_table_association" "assoc1" {
+  subnet_id      = aws_subnet.subnet1.id
+  route_table_id = aws_route_table.rtb.id
+}
+
+# Subnet2 route table association
+resource "aws_route_table_association" "assoc2" {
+  subnet_id      = aws_subnet.subnet2.id
   route_table_id = aws_route_table.rtb.id
 }
 
 # Uber Client Application security group
 resource "aws_security_group" "uber_client_app_sg" {
-  name        = "uber_client_application"
+  name        = "uber-client-application"
   description = "Security group for EC2 instance with uber client application"
   vpc_id      = aws_vpc.tf_vpc.id
   ingress {
@@ -77,7 +94,7 @@ resource "aws_security_group" "uber_client_app_sg" {
 
 # Application security group
 resource "aws_security_group" "uber_server_app_sg" {
-  name        = "uber_server_application"
+  name        = "uber-server-application"
   description = "Security group for EC2 instance with uber server web application"
   vpc_id      = aws_vpc.tf_vpc.id
   ingress {
@@ -105,7 +122,7 @@ resource "aws_security_group" "uber_server_app_sg" {
 
 # Database security group
 resource "aws_security_group" "db_sg" {
-  name        = "database"
+  name        = "uber-database-sg"
   description = "Security group for RDS instance for uber database"
   vpc_id      = aws_vpc.tf_vpc.id
   ingress {
@@ -122,7 +139,7 @@ resource "aws_security_group" "db_sg" {
 #db subnet group for rds
 resource "aws_db_subnet_group" "db_subnet_group" {
   description = "Subnet group for RDS"
-  subnet_ids  = [aws_subnet.subnet.id]
+  subnet_ids  = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
   tags = {
     "Name" = "uber-db-subnet-group"
   }
@@ -151,7 +168,7 @@ resource "aws_db_instance" "rds" {
 resource "aws_instance" "uber-server-ec2" {
   ami                  = var.ami_name
   instance_type        = var.instance_type
-  subnet_id            = element([aws_subnet.subnet.id], var.instance_subnet - 1)
+  subnet_id            = element([aws_subnet.subnet1.id, aws_subnet.subnet2.id], var.instance_subnet - 2)
   key_name             = var.key_name
   security_groups      = [aws_security_group.uber_server_app_sg.id]
   ebs_block_device {
@@ -168,8 +185,6 @@ resource "aws_instance" "uber-server-ec2" {
     echo "export UBER_DB_NAME=${var.db_name}" >> /etc/environment
     echo "export UBER_DB_USER=${var.db_username}" >> /etc/environment
     echo "export UBER_DB_PASSWORD=${var.db_password}" >> /etc/environment
-    chown -R ubuntu:www-data /var/www
-    usermod -a -G www-data ubuntu
   EOF
   tags = {
     "Name" = "ec2-uber-server"
@@ -180,7 +195,7 @@ resource "aws_instance" "uber-server-ec2" {
 resource "aws_instance" "uber-client-ec2" {
   ami                  = var.ami_name
   instance_type        = var.instance_type
-  subnet_id            = element([aws_subnet.subnet.id], var.instance_subnet - 1)
+  subnet_id            = element([aws_subnet.subnet1.id, aws_subnet.subnet2.id], var.instance_subnet - 1)
   key_name             = var.key_name
   security_groups      = [aws_security_group.uber_client_app_sg.id]
   ebs_block_device {
@@ -194,8 +209,6 @@ resource "aws_instance" "uber-client-ec2" {
     echo "# App Environment Variables"
     echo "export REACT_APP_SERVER_API_BASE_URL=${aws_instance.uber-server-ec2.public_ip}" >> /etc/environment
     echo "export REACT_APP_SERVER_API_PORT=${var.ec2_server_port}" >> /etc/environment
-    chown -R ubuntu:www-data /var/www
-    usermod -a -G www-data ubuntu
   EOF
   tags = {
     "Name" = "ec2-uber-client"
