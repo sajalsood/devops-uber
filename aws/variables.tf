@@ -33,6 +33,60 @@ variable "azs" {
   default     = "b"
 }
 
+variable "db_storage_size" {
+  description = "Availability zones for subnets."
+  type        = number
+  default     = 20
+}
+
+variable "db_instance_class" {
+  description = "Instance class for RDS"
+  default     = "db.t3.micro"
+}
+
+variable "db_engine" {
+  description = "DB engine for RDS"
+  default     = "postgres"
+}
+
+variable "db_engine_version" {
+  description = "DB engine version for RDS"
+  default     = "12"
+}
+
+variable "db_name" {
+  description = "DB name"
+  default     = "csye7220_uber"
+}
+
+variable "db_username" {
+  description = "DB username"
+  default     = "postgres"
+}
+
+variable "db_password" {
+  description = "DB password"
+  default     = "postgres"
+}
+
+variable "db_public_access" {
+  description = "DB public accessibility"
+  type        = bool
+  default     = false
+}
+
+variable "db_multiaz" {
+  description = "DB multi AZ"
+  type        = bool
+  default     = false
+}
+
+variable "ec2_server_port" {
+  description = "EC2 server instance port"
+  type        = string
+  default     = "4444"
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
@@ -56,6 +110,8 @@ variable "instance_subnet" {
   type        = number
   default     = 1
 }
+
+
 
 variable "key_name" {
   description = "Name of key"
