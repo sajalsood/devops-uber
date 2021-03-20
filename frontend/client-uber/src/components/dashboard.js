@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { login } from '../services/apis';
 import { Container, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
@@ -7,10 +7,16 @@ export default function Dashboard({user}) {
 
   const [source, setSource] = useState();
   const [destination, setDestination] = useState();
-  const [booking_date, setBookingDate] = useState();
+  const [booking_date, setBookingDate] = useState(Date());
   const [booking_time, setBookingTime] = useState();
   const [bus_id, setBus] = useState();
   const [seats, setSeats] = useState();
+
+  useEffect(() => {
+    // let date = new Date();
+    // console.log(date);
+    // setBookingDate(date);
+  });
 
   const handleSubmit = async e => {
     e.preventDefault();
