@@ -167,7 +167,7 @@ resource "aws_db_instance" "rds" {
 
 # Server EC2 template file
 data "template_file" "server_init" {
-  template = "${file("server_init.sh")}"
+  template = file("./server-init.sh")
 
   vars = {
     UBER_DB_HOST = aws_db_instance.rds.address
@@ -200,7 +200,7 @@ resource "aws_instance" "uber-server-ec2" {
 
 # Client EC2 template file
 data "template_file" "client_init" {
-  template = "${file("client_init.sh")}"
+  template = file("./client-init.sh")
 
   vars = {
     REACT_APP_SERVER_API_BASE_URL = aws_instance.uber-server-ec2.public_ip
