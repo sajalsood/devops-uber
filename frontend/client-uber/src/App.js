@@ -56,7 +56,7 @@ function App() {
                 <NavLink href="/bookings">Bookings</NavLink>
               </NavItem>
             </Nav>
-            <NavbarText>Hello, {user.user_name} &nbsp;&nbsp;&nbsp;</NavbarText>
+            <NavbarText>Hello there, {user.user_name} &nbsp;&nbsp;&nbsp;</NavbarText>
             <Button color="danger" onClick={e => clearSession()}>Logout</Button>
           </Collapse>
         </Navbar>

@@ -16,7 +16,7 @@ export default function Bookings({user}) {
 
 
   return(
-      <Container className="themed-container">
+      <Container className="Booking themed-container">
         <h3><center>Check Your Bookings!</center></h3>
           <Table className="mg-3" striped>
             <thead>
