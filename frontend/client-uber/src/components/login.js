@@ -37,7 +37,7 @@ export default function Login({setUser}) {
                         <Input type="text" name="username" placeholder="Enter Username" onChange={e => { setAlertVisible(false); setUserName(e.target.value) }} />
                     </FormGroup>
                     <FormGroup>
-                        <Input type="password" name="password" placeholder="Enter Password" onChange={e => setPassword(e.target.value)}/>
+                        <Input type="password" name="password" placeholder="Enter Password" onChange={e => { setAlertVisible(false); setPassword(e.target.value)}}/>
                     </FormGroup>
                     <Button color="primary" type="submit" style={{ width: '100%' }}>LOGIN</Button>
                 </Form>
