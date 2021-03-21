@@ -39,7 +39,7 @@ export default function Login({setUser}) {
                     <FormGroup>
                         <Input type="password" name="password" placeholder="Enter Password" onChange={e => setPassword(e.target.value)}/>
                     </FormGroup>
-                    <Button color="primary" type="submit" style={{ width: '100%' }}>Submit</Button>
+                    <Button color="primary" type="submit" style={{ width: '100%' }}>LOGIN</Button>
                 </Form>
             </Card>
         </Container>

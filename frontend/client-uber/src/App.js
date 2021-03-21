@@ -6,6 +6,7 @@ import "./App.css";
 import Dashboard from './components/dashboard';
 import Bookings from './components/bookings';
 import Login from './components/login';
+import Error from './components/error';
 import Session from './services/session';
 import {
   Badge,
@@ -33,7 +34,16 @@ function App() {
           </NavbarBrand>
         </Navbar>
         <div className="App">
-            <Login setUser={setUser} />
+          <BrowserRouter>
+              <Switch>
+                <Route exact path="/">
+                  <Login setUser={setUser} />
+                </Route>
+                <Route path="">
+                  <Error />
+                </Route>
+              </Switch>
+            </BrowserRouter>
         </div>
     </div>
     )
@@ -68,6 +78,9 @@ function App() {
                 </Route>
                 <Route path="/bookings">
                   <Bookings user={user}/>
+                </Route>
+                <Route path="">
+                  <Error/>
                 </Route>
               </Switch>
           </BrowserRouter>

@@ -33,6 +33,13 @@ body {
   gap: 1rem;
 }
 
+.Error {
+  width: 33% !important;
+  display: grid;
+  grid-template-rows: 3rem auto;
+  gap: 1rem;
+}
+
 .Dashboard {
   display: grid;
   grid-template-columns: auto 1fr;
