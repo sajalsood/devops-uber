@@ -198,13 +198,20 @@ resource "aws_instance" "uber-server-ec2" {
   depends_on = [aws_db_instance.rds]
 }
 
+# Elastic IP for uber-server-ec2
+resource "aws_eip" "uber-server-eip" {
+  instance = aws_instance.uber-server-ec2.id
+  vpc      = true
+  depends_on = [aws_instance.uber-server-ec2]
+}
+
 # Client EC2 template file
 data "template_file" "client_init" {
   template = file("./client-init.sh")
 
   vars = {
-    REACT_APP_SERVER_API_BASE_URL = aws_instance.uber-server-ec2.public_ip
-    REACT_APP_SERVER_API_PORT  = var.ec2_server_port
+    REACT_APP_SERVER_API_BASE_URL = aws_eip.uber-server-eip.public_ip
+    REACT_APP_SERVER_API_PORT = var.ec2_server_port
   }
 }
 

@@ -11,12 +11,12 @@ const db = require("./db/db-config");
 app.use(cors())
 app.use(express.json());
 
-db.sequelize.sync({force: true}).then(() => {
+db.sequelize.sync({force: false}).then(() => {
   db.seed();
   console.log("Database Sync Completed");
 }).catch(err => console.log(err));
 
-app.get("/", (req, res) => {res.send("Healthy!") });
+app.get("/", (req, res) => {res.send("Server is Running!") });
 app.post('/api/v1/login', routes.login);
 app.get('/api/v1/buses', routes.buses);
 app.post('/api/v1/booking', routes.booking);
