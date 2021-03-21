@@ -22,5 +22,5 @@ app.get('/api/v1/buses', routes.buses);
 app.post('/api/v1/booking', routes.booking);
 app.get('/api/v1/bookings/:user_id', routes.bookings);
 
-app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`) );
+app.listen(PORT, () => console.log(`Server is listening on port - ${PORT}`) );
 
