@@ -8,7 +8,7 @@ import Bookings from './components/bookings';
 import Login from './components/login';
 import Session from './services/session';
 import {
-  Container,
+  Badge,
   Collapse,
   Navbar,
   NavbarBrand,
@@ -26,7 +26,11 @@ function App() {
     return (
       <div>
         <Navbar color="dark" dark expand="md">
-          <NavbarBrand href="/">DevopsUBER</NavbarBrand>
+          <NavbarBrand href="/">
+            <div className="Logo">
+              <small>Uber<br/>Bus</small>
+            </div>
+          </NavbarBrand>
         </Navbar>
         <div className="App">
             <Login setUser={setUser} />
@@ -38,7 +42,11 @@ function App() {
   return (
     <div>
         <Navbar color="dark" dark expand="md">
-          <NavbarBrand href="/">DevopsUBER</NavbarBrand>
+          <NavbarBrand href="/">
+            <div className="Logo">
+              <small>Uber<br/>Bus</small>
+            </div>
+          </NavbarBrand>
           <Collapse navbar>
             <Nav className="mr-auto" navbar>
               <NavItem>
@@ -53,7 +61,7 @@ function App() {
           </Collapse>
         </Navbar>
         <div className="App">
-          <BrowserRouter>
+            <BrowserRouter>
               <Switch>
                 <Route exact path="/">
                   <Dashboard user={user}/>
