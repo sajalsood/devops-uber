@@ -1,10 +1,11 @@
 const db = require("../db/db-config");
 const Users = db.users;
 
-exports.isUserExists = (user_name) => {
+exports.isUserExists = (user_name, password) => {
     return Users.count({
         where: {
-            user_name: user_name
+            user_name: user_name,
+            password: password
         }
     });
 }

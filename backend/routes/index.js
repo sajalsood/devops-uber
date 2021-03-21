@@ -9,19 +9,22 @@ const routes = {
   bookings: {}
 };
 
-routes.login = async(req, res ) => {
-  const { user_name } = req.body;
+routes.login = async(req, res) => {
+  const { user_name, password } = req.body;
 
-  if(!user_name || !user_name.trim()) {
-    api(res)({status: 400, message: 'Invalid Username' });
+  if(!user_name || !user_name.trim() || !password || !password.trim()) {
+    api(res)({status: 400, message: 'Invalid Username or Password' });
     return;
   }
 
-  let user = await userService.getUser(user_name);
+  let user = await userService.getUser(user_name, password);
+
   if(!user) {
-    user = await userService.addUser({user_name});
+    user = await userService.addUser({user_name, password});
   }
+
   api(res)({ data: user });
+
 };
 
 routes.buses = async(req, res) => {
