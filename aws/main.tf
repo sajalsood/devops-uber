@@ -329,3 +329,8 @@ resource "aws_instance" "uber-client-ec2" {
   }
   depends_on = [aws_instance.uber-server-ec2]
 }
+
+output "ec2_public_ip" {
+  value = aws_instance.uber-client-ec2.public_ip
+   description = "The public IP address of the uber client instance."
+}
