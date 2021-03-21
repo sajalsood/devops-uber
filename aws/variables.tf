@@ -116,3 +116,8 @@ variable "key_name" {
   type        = string
 }
 
+variable "key_path" {
+  description = "Path of the key"
+  type        = string
+}
+

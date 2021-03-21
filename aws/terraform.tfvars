@@ -1,5 +1,6 @@
 profile = "root"
 region  = "us-east-1"
 key_name = "aws-mac"
+key_path = "~/.ssh/aws-mac"
 ami_name = "ami-0885b1f6bd170450c"
 db_password = "postgres" 

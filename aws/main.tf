@@ -165,19 +165,6 @@ resource "aws_db_instance" "rds" {
   }
 }
 
-# Server EC2 template file
-data "template_file" "server_init" {
-  template = file("./server-init.sh")
-
-  vars = {
-    UBER_DB_HOST = aws_db_instance.rds.address
-    UBER_DB_PORT = aws_db_instance.rds.port
-    UBER_DB_NAME = var.db_name
-    UBER_DB_USER = var.db_username
-    UBER_DB_PASSWORD = var.db_password
-  }
-}
-
 # Server EC2
 resource "aws_instance" "uber-server-ec2" {
   ami                  = var.ami_name
@@ -191,7 +178,62 @@ resource "aws_instance" "uber-server-ec2" {
     volume_size           = var.instance_vol_size
     delete_on_termination = true
   }
-  user_data = "${data.template_file.server_init.rendered}"
+
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    private_key = "${file(var.key_path)}"
+    host = "${self.public_ip}"
+  } 
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo chmod 777 /etc/environment",
+      "echo UBER_DB_HOST=${aws_db_instance.rds.address} >> /etc/environment",
+      "echo UBER_DB_PORT=${aws_db_instance.rds.port} >> /etc/environment",
+      "echo UBER_DB_NAME=${var.db_name} >> /etc/environment",
+      "echo UBER_DB_USER=${var.db_username} >> /etc/environment",
+      "echo UBER_DB_PASSWORD=${var.db_password} >> /etc/environment",
+      "sudo chmod 644 /etc/environment",
+      "curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -",
+      "sudo apt install -y nodejs",
+      "mkdir /home/ubuntu/app/"
+    ]
+  }
+
+  provisioner "local-exec" {
+    command = "rm -rf ../backend/node_modules"
+  }
+
+  provisioner "file" {
+    source      = "../backend/"
+    destination = "/home/ubuntu/app"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cd /home/ubuntu/app/",
+      "rm .env",
+      "npm install",
+      "sudo touch /etc/systemd/system/uber-server.service",
+      "sudo chmod 777 /etc/systemd/system/uber-server.service",
+      "sudo echo '[Unit]' > /etc/systemd/system/uber-server.service",
+      "sudo echo 'Description=UBER Server Service' >> /etc/systemd/system/uber-server.service",
+      "sudo echo 'After=network.target' >> /etc/systemd/system/uber-server.service",
+      "sudo echo '[Service]' >> /etc/systemd/system/uber-server.service",
+      "sudo echo 'ExecStart=/usr/bin/node /home/ubuntu/app/server.js' >> /etc/systemd/system/uber-server.service",
+      "sudo echo 'User=ubuntu' >> /etc/systemd/system/uber-server.service",
+      "sudo echo 'EnvironmentFile=/etc/environment/' >> /etc/systemd/system/uber-server.service",
+      "sudo echo '[Install]' >> /etc/systemd/system/uber-server.service",
+      "sudo echo 'WantedBy=multi-user.target' >> /etc/systemd/system/uber-server.service",
+      "sudo chmod 644 /etc/systemd/system/uber-server.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl start uber-server",
+      "sudo systemctl enable uber-server"
+    ]
+  }
+
   tags = {
     "Name" = "ec2-uber-server"
   }
@@ -203,16 +245,6 @@ resource "aws_eip" "uber-server-eip" {
   instance = aws_instance.uber-server-ec2.id
   vpc      = true
   depends_on = [aws_instance.uber-server-ec2]
-}
-
-# Client EC2 template file
-data "template_file" "client_init" {
-  template = file("./client-init.sh")
-
-  vars = {
-    REACT_APP_SERVER_API_BASE_URL = aws_eip.uber-server-eip.public_ip
-    REACT_APP_SERVER_API_PORT = var.ec2_server_port
-  }
 }
 
 # Client EC2
@@ -228,10 +260,72 @@ resource "aws_instance" "uber-client-ec2" {
     volume_size           = var.instance_vol_size
     delete_on_termination = true
   }
-  user_data = "${data.template_file.client_init.rendered}"
+
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    private_key = "${file(var.key_path)}"
+    host = "${self.public_ip}"
+  } 
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo chmod 777 /etc/environment",
+      "echo REACT_APP_SERVER_API_BASE_URL=http://${aws_eip.uber-server-eip.public_ip} >> /etc/environment",
+      "echo REACT_APP_SERVER_API_PORT=${var.ec2_server_port} >> /etc/environment",
+      "sudo chmod 644 /etc/environment",
+      "curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -",
+      "sudo apt install -y nodejs",
+      "sudo apt-get install -y apache2",
+      "sudo systemctl start apache2",
+      "sudo systemctl enable apache2",
+      "sudo a2enmod rewrite",
+      "sudo systemctl restart apache2",
+      "sudo chmod 777 /etc/apache2/sites-available/000-default.conf",
+      "sudo truncate -s0 /etc/apache2/sites-available/000-default.conf",
+      "sudo echo '<VirtualHost *:80>' > /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'ServerAdmin webmaster@localhost' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'DocumentRoot /var/www/html' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo '<Directory '/var/www/html'>' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'Options FollowSymLinks' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'AllowOverride All' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'RewriteEngine on' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'RewriteCond %%{REQUEST_FILENAME} -f [OR]' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'RewriteCond %%{REQUEST_FILENAME} -d' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'RewriteRule ^ - [L]' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo 'RewriteRule ^ index.html [L]' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo '</Directory>' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo echo '</VirtualHost>' >> /etc/apache2/sites-available/000-default.conf",
+      "sudo chmod 644 /etc/apache2/sites-available/000-default.conf",
+      "sudo systemctl restart apache2",
+      "sudo chown -R ubuntu:www-data /var/www",
+      "sudo usermod -a -G www-data ubuntu",
+      "mkdir /home/ubuntu/app/"
+    ]
+  }
+
+  provisioner "local-exec" {
+    command = "rm -rf ../frontend/client-uber/node_modules ../frontend/client-uber/build"
+  }
+
+  provisioner "file" {
+    source      = "../frontend/client-uber/"
+    destination = "/home/ubuntu/app"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cd /home/ubuntu/app",
+      "rm .env",
+      "npm install",
+      "npm run build",
+      "cp -r build/* /var/www/html/"
+    ]
+  }
+
   tags = {
     "Name" = "ec2-uber-client"
   }
   depends_on = [aws_instance.uber-server-ec2]
 }
-
