@@ -11,7 +11,7 @@ const db = require("./db/db-config");
 app.use(cors())
 app.use(express.json());
 
-db.sequelize.sync({force: false}).then(() => {
+db.sequelize.sync({force: true}).then(() => {
   db.seed();
   console.log("Database Sync Completed");
 }).catch(err => console.log(err));
