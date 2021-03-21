@@ -6,7 +6,6 @@ import Geocode from "react-geocode";
 import {debounce} from 'lodash';
 
 export default function Dashboard({user}) {
-  Geocode.setApiKey("AIzaSyAX5Fiy_pu-e-mm1oqZpMZbh0akwOSe9HE");
 
   const today_date = new Date().toISOString().substr(0,10);
   const [buses, setBuses] = useState([]);
@@ -32,19 +31,22 @@ export default function Dashboard({user}) {
     e.preventDefault();
 
     if(!source || !source.trim() || !destination || !destination.trim() || !bus_id || !seats || !booking_date || !booking_time){
-      setAlertVisible({isOpen: true, color: 'danger', message: "Please enter correct details"});
+      setAlertVisible({isOpen: true, color: 'danger', message: "Error! Please enter correct details."});
       return;
     }
 
     const user_id = user.user_id;
     const booking = await createBooking({source, destination, booking_date, booking_time, bus_id, seats, user_id});
 
+    console.log(booking);
+
     if(booking.data.booking_id) {
-      setAlertVisible({isOpen: true, message: `Booking has been created`});
+      setAlertVisible({isOpen: true, message: `Success! You ride has been booked.`});
     }
   }
 
   const sourceHandler = useCallback(debounce((e) => {
+    Geocode.setApiKey("AIzaSyAX5Fiy_pu-e-mm1oqZpMZbh0akwOSe9HE");
     Geocode.fromAddress(e).then(
       (response) => {
         setSource(e);
@@ -65,6 +67,7 @@ export default function Dashboard({user}) {
   }
 
   const destinationHandler = useCallback(debounce((e) => {
+    Geocode.setApiKey("AIzaSyAX5Fiy_pu-e-mm1oqZpMZbh0akwOSe9HE");
     Geocode.fromAddress(e).then(
       (response) => {
         setDestination(e);
@@ -128,7 +131,7 @@ export default function Dashboard({user}) {
               <Col md={8}>
                 <FormGroup>
                     <Label for="bookingdate">Date</Label>
-                    <Input type="date" name="bookingdate" placeholder="Date" defaultValue={today_date} onChange={e => { setAlertVisible({isOpen:false}); setBookingDate(e.target.value)}} />
+                    <Input type="date" name="bookingdate" placeholder="Date" min={today_date} defaultValue={today_date} onChange={e => { setAlertVisible({isOpen:false}); setBookingDate(e.target.value)}} />
                 </FormGroup>
               </Col>
               <Col md={4}>
@@ -153,7 +156,7 @@ export default function Dashboard({user}) {
               <Col md={4}>
                 <FormGroup>
                   <Label for="seats">Seats</Label>
-                  <Input type="number" name="seats" placeholder="Seats" onChange={e => { setAlertVisible(false); setSeats(e.target.value)}} />
+                  <Input type="number" name="seats" placeholder="Seats" onChange={e => { setAlertVisible({isOpen:false}); setSeats(e.target.value)}} />
                 </FormGroup>
               </Col>
             </Row>

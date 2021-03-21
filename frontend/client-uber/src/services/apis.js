@@ -24,7 +24,7 @@ export const createBooking = async(booking) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(booking)
-  }).then(res => res.json())
+  }).then(res => res.json()).catch(err => console.log(err))
 }
 
 export const getBookings = async(user_id) => {

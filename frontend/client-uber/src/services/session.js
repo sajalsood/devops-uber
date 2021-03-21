@@ -16,7 +16,8 @@ export default function Session() {
 
   const clearSession = () => {
     sessionStorage.clear();
-    setUser("");
+    setUser({});
+    window.location.href = "/";
   };
 
   return {
