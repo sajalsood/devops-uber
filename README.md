@@ -19,7 +19,7 @@ The deployment scripts would automate the creation of VPC,subnets,ip-gateway,rou
 
 ## Features
 
-Application Features – Twitter
+Application Features
 
 1. Login into the Uber-app
 2. Web application where user can book a bus
