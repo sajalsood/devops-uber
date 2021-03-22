@@ -121,3 +121,9 @@ variable "key_path" {
   type        = string
 }
 
+variable "google_maps_api" {
+  description = "Google Maps API key"
+  type        = string
+}
+
+
