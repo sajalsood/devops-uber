@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
 import "./App.css";
-
 import Dashboard from './components/dashboard';
 import Bookings from './components/bookings';
 import Login from './components/login';

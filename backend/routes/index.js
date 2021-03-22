@@ -8,7 +8,7 @@ const routes = {
   booking: {},
   bookings: {}
 };
-
+// route for login 
 routes.login = async(req, res) => {
   const { user_name, password } = req.body;
 
@@ -26,18 +26,18 @@ routes.login = async(req, res) => {
   api(res)({ data: user });
 
 };
-
+//route to get all buses
 routes.buses = async(req, res) => {
   let buses = await busService.getBuses();
   api(res)({ data: buses });
 };
-
+//route to add all bookings
 routes.booking = async(req, res) => {
   const req_booking = req.body;
   let booking = await bookingService.addBooking(req_booking);
   api(res)({ data: booking });
 };
-
+//route to get based on user_id
 routes.bookings = async(req, res) => {
   const user_id = req.params.user_id;
   let bookings = await bookingService.getUserBookings(user_id);
