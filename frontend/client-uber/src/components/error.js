@@ -1,6 +1,6 @@
-import React,  { useState } from 'react';
-import { Container, Button, Form, FormGroup, Input,
-    Card, CardImg, CardText, Alert,
+import React from 'react';
+import { Container, Button,
+    Card, CardImg, CardText,
     CardTitle } from 'reactstrap';
 
 const backToHome = () => {

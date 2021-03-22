@@ -21,7 +21,7 @@ body {
 
 .Logo {
   background-color: black;
-  padding: 5px;
+  padding: 0.7rem;
   line-height: 1;
   border: 1px solid #FFF;
 }
@@ -57,3 +57,33 @@ body {
   margin: 3rem auto;
 }
 
+.nav-link {
+  font-size: 20px;
+  color: #FFF !important;
+}
+
+.nav-link:hover {
+  color: yellow !important;
+}
+
+.pin {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: -20px;
+  top: -40px;
+
+  border-radius: 50% 50% 50% 0;
+  border: 2px solid #fff;
+  background-color: red;
+  transform: rotate(-45deg);
+}
+
+.pin-text {
+  position: absolute;
+  left: -10px;
+  top: -35px;
+  z-index: 10;
+  color: #FFF;
+  font-size: medium;
+}

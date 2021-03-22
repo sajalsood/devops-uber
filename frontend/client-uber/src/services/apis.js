@@ -17,7 +17,6 @@ export const getBuses = async() => {
 }
 
 export const createBooking = async(booking) => {
-  console.log(booking);
   return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}:${process.env.REACT_APP_SERVER_API_PORT}/api/v1/booking`, {
     method: 'POST',
     headers: {

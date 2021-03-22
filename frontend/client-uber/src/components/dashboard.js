@@ -1,24 +1,29 @@
 import React, { useState, useEffect, useCallback} from 'react';
 import { getBuses, createBooking } from '../services/apis';
 import { Row, Col, Container, Button, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
-import { withScriptjs, withGoogleMap, GoogleMap, Marker, Polyline, lineSymbol } from "react-google-maps"
+import GoogleMapReact from 'google-map-react';
 import Geocode from "react-geocode";
 import {debounce} from 'lodash';
 
-export default function Dashboard({user}) {
+export default React.memo(function Dashboard({user}) {
 
   const today_date = new Date().toISOString().substr(0,10);
   const [buses, setBuses] = useState([]);
   const [source, setSource] = useState();
-  const [source_cord, setSourceCoordiantes] = useState();
   const [destination, setDestination] = useState();
-  const [destination_cord, setDestinationCoordiantes] = useState();
+  const [source_lat, setSourceLat] = useState();
+  const [source_lng, setSourceLng] = useState();
+  const [dest_lat, setDestLat] = useState();
+  const [dest_lng, setDestLng] = useState();
   const [marker_path, setMarkerPath] = useState([]);
   const [booking_date, setBookingDate] = useState(today_date);
   const [booking_time, setBookingTime] = useState("08:00");
   const [bus_id, setBus] = useState();
   const [seats, setSeats] = useState();
+  const [google, setGoogleMap] = useState();
+  const [flightPath, setFlightPath] = useState();
   const [alertVisible, setAlertVisible] = useState({isOpen : false, color: 'danger'});
+  Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API);
 
   useEffect(() => {
     (async () => {
@@ -26,6 +31,7 @@ export default function Dashboard({user}) {
       setBuses(buses.data);
     })();
   },[]);
+
 
   const handleSubmit = async(e)=> {
     e.preventDefault();
@@ -38,78 +44,90 @@ export default function Dashboard({user}) {
     const user_id = user.user_id;
     const booking = await createBooking({source, destination, booking_date, booking_time, bus_id, seats, user_id});
 
-    console.log(booking);
-
     if(booking.data.booking_id) {
       setAlertVisible({isOpen: true, message: `Success! You ride has been booked.`});
     }
   }
 
   const sourceHandler = useCallback(debounce((e) => {
-    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API);
     Geocode.fromAddress(e).then(
       (response) => {
-        setSource(e);
-        setSourceCoordiantes(response.results[0].geometry.location);
-        marker_path[0]=response.results[0].geometry.location;
+        const {lat, lng} = marker_path[0] = response.results[0].geometry.location;
+        setSourceLat(lat);
+        setSourceLng(lng);
         setMarkerPath(marker_path);
+        if(marker_path.length > 1) {
+          var flightPath = new google.maps.Polyline({
+            path: marker_path,
+            geodesic: true,
+            strokeColor: 'red',
+            strokeOpacity: 1,
+            strokeWeight: 2
+          });
+    
+          flightPath.setMap(google.map);
+          setFlightPath(flightPath);
+        }
       },
       (error) => {
         console.error(error);
       }
     )
-  }, 1000), []);
+  }, 1000), [google]);
 
-  const handleSourceMarker = (e)=> {
-    setMarkerPath([]);
-    setSourceCoordiantes("");
-    sourceHandler(e);
+  const handleSourceMarker = (src)=> {
+    if(flightPath) {
+      flightPath.setMap(null);
+    }
+    if(src) {
+      sourceHandler(src);
+    }
   }
 
   const destinationHandler = useCallback(debounce((e) => {
-    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API);
     Geocode.fromAddress(e).then(
       (response) => {
-        setDestination(e);
-        setDestinationCoordiantes(response.results[0].geometry.location);
-        marker_path[1]=response.results[0].geometry.location;
+        const {lat, lng} = marker_path[1] = response.results[0].geometry.location;
+        setDestLat(lat);
+        setDestLng(lng);
         setMarkerPath(marker_path);
+        if(marker_path.length > 1) {
+          var flightPath = new google.maps.Polyline({
+            path: marker_path,
+            geodesic: true,
+            strokeColor: 'red',
+            strokeOpacity: 1,
+            strokeWeight: 2
+          });
+    
+          flightPath.setMap(google.map);
+          setFlightPath(flightPath);
+        }
       },
       (error) => {
         console.error(error);
       }
     )
-  }, 1000), []);
+  }, 1000), [google]);
 
-  const handleDestinationMarker = (e)=> {
-    setMarkerPath([]);
-    setDestinationCoordiantes("");
-    destinationHandler(e);
+  const handleDestinationMarker = (dest)=> {
+    if(flightPath) {
+      flightPath.setMap(null);
+    }
+    
+    if(dest) {
+      destinationHandler(dest);
+    }
   }
 
-  const MapComponent = withScriptjs(withGoogleMap(props =>
-    <GoogleMap defaultZoom={10} defaultCenter={{ lat: 42.361145, lng: -71.057083 }}>
-      { source_cord && <Marker position={source_cord}/> }
-      { destination_cord && <Marker position={destination_cord}/> }
-
-      { marker_path && <Polyline
-                path={marker_path}
-                geodesic={true}
-                options={{
-                    strokeColor: "#ff2527",
-                    strokeOpacity: 0.75,
-                    strokeWeight: 2,
-                    icons: [
-                        {
-                            icon: lineSymbol,
-                            offset: "0",
-                            repeat: "20px"
-                        }
-                    ]
-                }}
-            />}
-    </GoogleMap>
-  ));
+  const MarkerComponent = ({text}) =>  {
+    return (
+      <div>
+        <span className="pin-text">{text}</span>
+        <div className="pin"></div>
+      </div>
+    )
+  };
 
   return(
       <Container className="Dashboard themed-container">
@@ -121,11 +139,11 @@ export default function Dashboard({user}) {
           <Form onSubmit={handleSubmit}>
             <FormGroup>
                 <Label for="source">Source</Label>
-                <Input type="text" name="source" placeholder="Source" onChange={e => { setAlertVisible({isOpen:false}); handleSourceMarker(e.target.value)}} />
+                <Input type="text" name="source" placeholder="Source" onChange={e => { setAlertVisible({isOpen:false}); handleSourceMarker(e.target.value); setSource(e.target.value); }} />
             </FormGroup>
             <FormGroup>
                 <Label for="destination">Destination</Label>
-                <Input type="text" name="destination"  placeholder="Destination" onChange={e => { setAlertVisible({isOpen:false}); handleDestinationMarker(e.target.value)}} />
+                <Input type="text" name="destination"  placeholder="Destination" onChange={e => { setAlertVisible({isOpen:false}); handleDestinationMarker(e.target.value); setDestination(e.target.value); }} />
             </FormGroup>
             <Row form>
               <Col md={6}>
@@ -163,13 +181,23 @@ export default function Dashboard({user}) {
             <Button color="primary" type="submit" style={{ width: '100%' }}>Book Your Ride</Button>
         </Form>
         </div>
-        <div>
-          <MapComponent 
-            googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API}&v=3.exp&libraries=geometry,drawing,places`}
-            loadingElement={<div style={{ height: `100%` }} />}
-            containerElement={<div style={{ height: `100%` }} />} 
-            mapElement={<div style={{ height: `100%` }} />}/>
-          </div>
+      <div>  
+        <GoogleMapReact
+          bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_API }}
+          defaultCenter={{
+            lat: 42.361145,
+            lng: -71.057083
+          }}
+          yesIWantToUseGoogleMapApiInternals
+          onGoogleApiLoaded={(e) => setGoogleMap(e)}
+          defaultZoom={10}>
+
+          { source && source_lat && source_lng && <MarkerComponent lat={source_lat} lng={source_lng} text="S" /> }  
+          { destination && dest_lat && dest_lng && <MarkerComponent lat={dest_lat} lng={dest_lng} text="D"/> }
+
+        </GoogleMapReact>
+      </div>  
       </Container>
   );
-}
+});
+

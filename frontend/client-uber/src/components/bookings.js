@@ -12,9 +12,9 @@ export default function Bookings({user}) {
       const bookings = data.data;
       setBookings(bookings);
     })();
-  }, []);
+  });
 
-  if(bookings.length == 0) {
+  if(bookings.length === 0) {
     return(
       <Container className="Booking themed-container">
           <div style={{ textAlign: 'center'}}>

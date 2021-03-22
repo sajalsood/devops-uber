@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import "./App.css";
@@ -9,7 +9,6 @@ import Login from './components/login';
 import Error from './components/error';
 import Session from './services/session';
 import {
-  Badge,
   Collapse,
   Navbar,
   NavbarBrand,
@@ -29,7 +28,7 @@ function App() {
         <Navbar color="dark" dark expand="md">
           <NavbarBrand href="/">
             <div className="Logo">
-              <small>Uber<br/>Bus</small>
+              <small><strong>Uber Bus</strong></small>
             </div>
           </NavbarBrand>
         </Navbar>
@@ -54,7 +53,7 @@ function App() {
         <Navbar color="dark" dark expand="md">
           <NavbarBrand href="/">
             <div className="Logo">
-              <small>Uber<br/>Bus</small>
+              <small><strong>Uber Bus</strong></small>
             </div>
           </NavbarBrand>
           <Collapse navbar>
