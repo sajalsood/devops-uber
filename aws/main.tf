@@ -7,7 +7,7 @@ resource "aws_vpc" "tf_vpc" {
   }
 }
 
-# Subnet for VPC
+# Subnet 1 for VPC
 resource "aws_subnet" "subnet1" {
   vpc_id                  = aws_vpc.tf_vpc.id
   cidr_block              = var.cidrs[0]
@@ -52,19 +52,19 @@ resource "aws_route" "public_route" {
   destination_cidr_block = "0.0.0.0/0"
 }
 
-# Subnet1 route table association
+# Subnet 1 route table association
 resource "aws_route_table_association" "assoc1" {
   subnet_id      = aws_subnet.subnet1.id
   route_table_id = aws_route_table.rtb.id
 }
 
-# Subnet2 route table association
+# Subnet 2 route table association
 resource "aws_route_table_association" "assoc2" {
   subnet_id      = aws_subnet.subnet2.id
   route_table_id = aws_route_table.rtb.id
 }
 
-# Uber Client Application security group
+# Uber Client application security group
 resource "aws_security_group" "uber_client_app_sg" {
   name        = "uber-client-application"
   description = "Security group for EC2 instance with uber client application"
@@ -92,7 +92,7 @@ resource "aws_security_group" "uber_client_app_sg" {
   }
 }
 
-# Application security group
+# Uber server application security group
 resource "aws_security_group" "uber_server_app_sg" {
   name        = "uber-server-application"
   description = "Security group for EC2 instance with uber server web application"
@@ -136,7 +136,7 @@ resource "aws_security_group" "db_sg" {
   }
 }
 
-#db subnet group for rds
+# Database subnet group for rds
 resource "aws_db_subnet_group" "db_subnet_group" {
   description = "Subnet group for RDS"
   subnet_ids  = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
@@ -145,7 +145,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
   }
 }
 
-#rds
+# RDS instance
 resource "aws_db_instance" "rds" {
   allocated_storage      = var.db_storage_size
   identifier             = "uber-app-rds-db"

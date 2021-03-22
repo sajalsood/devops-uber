@@ -1,10 +1,12 @@
 const db = require("../db/db-config");
 const Booking = db.bookings;
-//add the bus bookings
+
+// add the bus bookings
 exports.addBooking = (booking) => {
     return Booking.create(booking);
 }
-//get bookings by user_name
+
+// get bookings by user_id
 exports.getUserBookings = (user_id) => {
     return Booking.findAll({
         where: {

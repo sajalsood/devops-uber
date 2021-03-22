@@ -1,6 +1,7 @@
 const db = require("../db/db-config");
 const Users = db.users;
-//check if user exists
+
+// check if user exists
 exports.isUserExists = (user_name, password) => {
     return Users.count({
         where: {
@@ -9,7 +10,7 @@ exports.isUserExists = (user_name, password) => {
         }
     });
 }
-//get the user using user_name
+// get the user using user_name
 exports.getUser = (user_name) => {
     return Users.findOne({
         where: {
@@ -17,7 +18,8 @@ exports.getUser = (user_name) => {
         }
     });
 }
-//add the user 
+
+// add the user 
 exports.addUser = (user) => {
     return Users.create(user);
 }
