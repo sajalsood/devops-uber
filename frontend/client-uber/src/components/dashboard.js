@@ -46,7 +46,7 @@ export default function Dashboard({user}) {
   }
 
   const sourceHandler = useCallback(debounce((e) => {
-    Geocode.setApiKey("AIzaSyAX5Fiy_pu-e-mm1oqZpMZbh0akwOSe9HE");
+    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API);
     Geocode.fromAddress(e).then(
       (response) => {
         setSource(e);
@@ -67,7 +67,7 @@ export default function Dashboard({user}) {
   }
 
   const destinationHandler = useCallback(debounce((e) => {
-    Geocode.setApiKey("AIzaSyAX5Fiy_pu-e-mm1oqZpMZbh0akwOSe9HE");
+    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API);
     Geocode.fromAddress(e).then(
       (response) => {
         setDestination(e);
@@ -128,13 +128,13 @@ export default function Dashboard({user}) {
                 <Input type="text" name="destination"  placeholder="Destination" onChange={e => { setAlertVisible({isOpen:false}); handleDestinationMarker(e.target.value)}} />
             </FormGroup>
             <Row form>
-              <Col md={8}>
+              <Col md={6}>
                 <FormGroup>
                     <Label for="bookingdate">Date</Label>
                     <Input type="date" name="bookingdate" placeholder="Date" min={today_date} defaultValue={today_date} onChange={e => { setAlertVisible({isOpen:false}); setBookingDate(e.target.value)}} />
                 </FormGroup>
               </Col>
-              <Col md={4}>
+              <Col md={6}>
                 <FormGroup>
                     <Label for="booktime">Time</Label>
                     <Input type="time" name="bookingtime" placeholder="Time"  defaultValue="08:00" onChange={e => { setAlertVisible({isOpen:false}); setBookingTime(e.target.value)}} />
@@ -142,7 +142,7 @@ export default function Dashboard({user}) {
               </Col>
             </Row>
             <Row form>
-              <Col md={8}>
+              <Col md={6}>
                 <FormGroup>
                   <Label for="bus">Bus</Label>
                   <Input type="select" name="bus" onChange={e => { setAlertVisible({isOpen:false}); setBus(e.target.value)}} >
@@ -153,10 +153,10 @@ export default function Dashboard({user}) {
                   </Input>
                 </FormGroup>
               </Col>
-              <Col md={4}>
+              <Col md={6}>
                 <FormGroup>
                   <Label for="seats">Seats</Label>
-                  <Input type="number" name="seats" placeholder="Seats" onChange={e => { setAlertVisible({isOpen:false}); setSeats(e.target.value)}} />
+                  <Input type="number" min="1" max="99" name="seats" placeholder="Seats" onChange={e => { setAlertVisible({isOpen:false}); setSeats(e.target.value)}} />
                 </FormGroup>
               </Col>
             </Row>
@@ -165,7 +165,7 @@ export default function Dashboard({user}) {
         </div>
         <div>
           <MapComponent 
-            googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAX5Fiy_pu-e-mm1oqZpMZbh0akwOSe9HE&v=3.exp&libraries=geometry,drawing,places"
+            googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API}&v=3.exp&libraries=geometry,drawing,places`}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `100%` }} />} 
             mapElement={<div style={{ height: `100%` }} />}/>

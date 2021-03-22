@@ -34,7 +34,7 @@ export default function Bookings({user}) {
                 <th>Booking #</th>
                 <th>Source</th>
                 <th>Destination</th>
-                <th>Date Time</th>
+                <th>Date Time (YYYY-mm-DD H:mm)</th>
                 <th>Bus</th>
                 <th>Seats</th>
               </tr>
