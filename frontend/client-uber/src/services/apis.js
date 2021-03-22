@@ -17,14 +17,13 @@ export const getBuses = async() => {
 }
 
 export const createBooking = async(booking) => {
-  console.log(booking);
   return fetch(`${process.env.REACT_APP_SERVER_API_BASE_URL}:${process.env.REACT_APP_SERVER_API_PORT}/api/v1/booking`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(booking)
-  }).then(res => res.json())
+  }).then(res => res.json()).catch(err => console.log(err))
 }
 
 export const getBookings = async(user_id) => {

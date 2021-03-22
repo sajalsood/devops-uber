@@ -274,6 +274,7 @@ resource "aws_instance" "uber-client-ec2" {
       "sudo chmod 777 /etc/environment",
       "echo REACT_APP_SERVER_API_BASE_URL=http://${aws_eip.uber-server-eip.public_ip} >> /etc/environment",
       "echo REACT_APP_SERVER_API_PORT=${var.ec2_server_port} >> /etc/environment",
+      "echo REACT_APP_GOOGLE_MAPS_API=${var.google_maps_api} >> /etc/environment",
       "sudo chmod 644 /etc/environment",
       "curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -",
       "sudo apt install -y nodejs",

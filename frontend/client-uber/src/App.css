@@ -8,7 +8,7 @@ body {
   height: 100%;
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: auto auto auto
+  grid-template-columns: 1rem auto 1rem;
 }
 
 .App > div {
@@ -21,15 +21,69 @@ body {
 
 .Logo {
   background-color: black;
-  padding: 5px;
+  padding: 0.7rem;
   line-height: 1;
   border: 1px solid #FFF;
 }
 
 .Login {
-  width: 50% !important;
+  width: 33% !important;
   display: grid;
   grid-template-rows: 3rem auto;
   gap: 1rem;
 }
 
+.Error {
+  width: 33% !important;
+  display: grid;
+  grid-template-rows: 3rem auto;
+  gap: 1rem;
+}
+
+.Dashboard {
+  display: grid;
+  margin: 3rem auto;
+  grid-template-columns: auto 1fr;
+  gap: 5rem;
+}
+
+.Dashboard-ride {
+  display: grid;
+  grid-template-rows: 2rem auto auto;
+  gap: 2rem;
+}
+
+.Booking {
+  margin: 3rem auto;
+}
+
+.nav-link {
+  font-size: 20px;
+  color: #FFF !important;
+}
+
+.nav-link:hover {
+  color: yellow !important;
+}
+
+.pin {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: -20px;
+  top: -40px;
+
+  border-radius: 50% 50% 50% 0;
+  border: 2px solid #fff;
+  background-color: red;
+  transform: rotate(-45deg);
+}
+
+.pin-text {
+  position: absolute;
+  left: -10px;
+  top: -35px;
+  z-index: 10;
+  color: #FFF;
+  font-size: medium;
+}

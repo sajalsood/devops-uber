@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import "./App.css";
 import Dashboard from './components/dashboard';
 import Bookings from './components/bookings';
 import Login from './components/login';
+import Error from './components/error';
 import Session from './services/session';
 import {
-  Badge,
   Collapse,
   Navbar,
   NavbarBrand,
@@ -26,12 +26,21 @@ function App() {
         <Navbar color="dark" dark expand="md">
           <NavbarBrand href="/">
             <div className="Logo">
-              <small>Uber<br/>Bus</small>
+              <small><strong>Uber Bus</strong></small>
             </div>
           </NavbarBrand>
         </Navbar>
         <div className="App">
-            <Login setUser={setUser} />
+          <BrowserRouter>
+              <Switch>
+                <Route exact path="/">
+                  <Login setUser={setUser} />
+                </Route>
+                <Route path="">
+                  <Error />
+                </Route>
+              </Switch>
+            </BrowserRouter>
         </div>
     </div>
     )
@@ -42,7 +51,7 @@ function App() {
         <Navbar color="dark" dark expand="md">
           <NavbarBrand href="/">
             <div className="Logo">
-              <small>Uber<br/>Bus</small>
+              <small><strong>Uber Bus</strong></small>
             </div>
           </NavbarBrand>
           <Collapse navbar>
@@ -54,7 +63,7 @@ function App() {
                 <NavLink href="/bookings">Bookings</NavLink>
               </NavItem>
             </Nav>
-            <NavbarText>Hello, {user.user_name} &nbsp;&nbsp;&nbsp;</NavbarText>
+            <NavbarText>Hello there, {user.user_name} &nbsp;&nbsp;&nbsp;</NavbarText>
             <Button color="danger" onClick={e => clearSession()}>Logout</Button>
           </Collapse>
         </Navbar>
@@ -66,6 +75,9 @@ function App() {
                 </Route>
                 <Route path="/bookings">
                   <Bookings user={user}/>
+                </Route>
+                <Route path="">
+                  <Error/>
                 </Route>
               </Switch>
           </BrowserRouter>

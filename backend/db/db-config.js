@@ -34,27 +34,19 @@ db.seed = async() => {
     const count = await db.buses.count();
     if(!count) {
         db.buses.create({
-            bus_name: 'NewBos',
-            source: 'Newton',
-            destination: 'Boston',
+            bus_name: 'Peter Pan',
             seats: 30
         });
         db.buses.create({
-            bus_name: 'BosQuin',
-            source: 'Boston',
-            destination: 'Quincy',
+            bus_name: 'Mega Bus',
             seats: 28
         });
         db.buses.create({
-            bus_name: 'DorcBos',
-            source: 'Dorchester',
-            destination: 'Boston',
+            bus_name: 'MBTA',
             seats: 33
         });
         db.buses.create({
-            bus_name: 'BosDorc',
-            source: 'Boston',
-            destination: 'Dorchester',
+            bus_name: 'Flix Bus',
             seats: 40
         });
     }
