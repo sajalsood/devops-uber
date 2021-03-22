@@ -32,13 +32,13 @@ The project has the following components:
 ### Components:
 
     - Frontend:
-    	1. React JS
-        2. Apache server
+    -   1. React JS
+    -   2. Apache server
     - Middleware:
-    	1. Express JS
-        2. Daemon service running a node server
+    -   1. Express JS
+    -   2. Daemon service running a node server
     - Backend:
-    	1. PostgreSQL
+    -   1. PostgreSQL
 
     	
 Application Deployment
