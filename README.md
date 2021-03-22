@@ -55,9 +55,11 @@ We need [Terraform](https://www.terraform.io/downloads.html)
 
 ## Initial set up
 
-Clone the project, and open the Terminal(Linux/Mac) or Git bash(Windows) into the infrastructure directory of the project and run the command
-1.Terraform init
-2.Terraform plan
-3.Terraform apply
+Clone the project, and open the Terminal(Linux/Mac) or Git bash(Windows) into the infrastructure directory of the project and run the command:
 
-Access the ec2_public_ip to view the uber-app
+1. `Terraform init`
+2. `Terraform plan`
+3. `Terraform apply`
+
+Access the `ec2_public_ip` to view the uber-app
+
